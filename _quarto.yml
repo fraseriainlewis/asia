@@ -1,0 +1,93 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "R Vignettes"
+  #logo: "GSK_logo_2022.svg" 
+  # Text for screen readers
+  #logo-alt: "Company Logo"
+  # URL to go to when clicking the logo (usually the home page)
+  #logo-href: https://data.nasa.gov/
+  
+  # --- NAVBAR (The Banner) ---
+  navbar:
+    logo: "GSK_logo_2022.svg"
+    background: "black" # Can also use "#000000" or "dark"
+    foreground: "white"   # Ensures text/icons are visible
+    search: true
+    #background: primary  # In 'United' theme, this is the signature Orange
+    left:
+      - icon: house-fill
+        text: "Home"
+        file: index.qmd
+
+      - text: "Tensorflow Probability"
+        icon: bezier2 # Bootstrap icon for strategy/flow
+        menu:
+          - text: "Install and setup"
+            file: tfp/index_tfp.qmd
+          - text: "---" # Separator line
+          - text: "Ex.1.1 Two Arm RCT, BHM, No U-Turn"
+            file: tfp/intro_model_build.qmd
+          - text: "---" # Separator line
+          - text: "External Partnerships"
+            file: strategy/partnerships.qmd
+
+      - text: "RStan"
+        icon: cpu # Icon for computing/TensorFlow
+        menu:
+          - text: "TensorFlow Framework"
+            file: models/tf-analysis.qmd
+          - text: "Clinical Validation"
+            file: models/validation.qmd
+      - text: "Graphical Neural Networks"
+        icon: gpu-card # Icon for computing/TensorFlow
+        menu:
+          - text: "TensorFlow Framework"
+            file: models/tf-analysis.qmd
+          - text: "Clinical Validation"
+            file: models/validation.qmd
+
+
+      - text: "Other"
+        icon: book
+        file: vignettes/index.qmd
+
+    right:
+      - icon: github
+        href: https://github.com/Your-Org-Name/tf-clinical-site
+      - icon: linkedin
+        href: https://linkedin.com/in/yourprofile
+
+  # --- SIDEBAR (Appears only in Vignettes section) ---
+  sidebar:
+    - id: vignettes-sidebar
+      title: "User Documentation"
+      style: "docked"
+      collapse-level: 2
+      contents:
+        - vignettes/index.qmd
+        - section: "Getting Started"
+          contents:
+            - vignettes/installation.qmd
+            - vignettes/basic-workflow.qmd
+        - section: "Advanced Topics"
+          contents:
+            - vignettes/tf-optimization.qmd
+            - vignettes/api-reference.qmd
+
+# --- GLOBAL FORMATTING ---
+format:
+  html:
+    theme: united           # Bootswatch United (Orange/White)
+    html-math-method: mathjax # High-quality math rendering
+    css: styles.css
+    toc: true
+    toc-location: right
+    code-fold: true         # Hides code by default, allows user to expand
+    code-copy: true         # Adds a copy button to code blocks
+    code-tools: true        # Adds 'View Source' button
+
+execute:
+  freeze: auto              # Saves your TensorFlow results locally

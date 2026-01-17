@@ -1,0 +1,24 @@
+project:
+  type: website
+
+website:
+  title: "asia"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    toc: true
+
+editor: visual
+
+execute:
+  freeze: auto  # This saves your R/TensorFlow results so GitHub doesn't have to re-run them
+

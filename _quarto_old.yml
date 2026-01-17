@@ -1,0 +1,47 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "GSK R Vignettes"
+  description: "Public vignettes for clinical science and translational research"
+  
+  # Navigation Bar at the top
+  navbar:
+    background: primary
+    left:
+      - text: "Home"
+        file: index.qmd
+      - text: "Tensorflow Probability"
+        file: tfp/index_tfp.qmd
+      - text: "RStan"
+        file: rstan/index_rstan.qmd
+      - text: "Other"
+        file: other/index_other.qmd
+
+  # Sidebar for the 'Vignettes' section only
+  # This makes the vignettes folder feel like a documentation manual
+  sidebar:
+    - id: vignettes-sidebar
+      title: "User Guides"
+      style: "floating"
+      contents:
+        - vignettes/getting-started.qmd
+        - vignettes/data-processing.qmd
+        - section: "Advanced Tutorials"
+          contents:
+            - vignettes/tf-optimization.qmd
+            - vignettes/clinical-validation.qmd
+
+format:
+  html:
+    theme: united           # <--- Sets the Bootswatch United theme
+    html-math-method: mathjax # <--- Sets the MathJax rendering engine    
+    css: styles.css
+    toc: true
+    code-copy: true
+    code-fold: true
+
+# Keep your R/TensorFlow results frozen
+execute:
+  freeze: auto
