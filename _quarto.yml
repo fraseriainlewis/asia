@@ -22,37 +22,35 @@ website:
         text: "Home"
         file: index.qmd
 
-      - text: "Tensorflow Probability"
+      - text: "Bayesian"
         icon: bezier2 # Bootstrap icon for strategy/flow
         menu:
-          - text: "Install and setup"
+          - text: "Getting Started"
             file: tfp/index_tfp.qmd
           - text: "---" # Separator line
           - text: "Ex.1.1 Two Arm RCT, BHM, No U-Turn"
             file: tfp/intro_model_build.qmd
-          - text: "---" # Separator line
-          - text: "External Partnerships"
-            file: strategy/partnerships.qmd
+          - text: "Ex.1.2: Ex.1.1 v RStan"
+            file: tfp/intro_2armstan.qmd
+          - text: "Ex.1.3: Gaussian Regression"
+            file: tfp/intro_normal_tf_stan.qmd
+          - text: "Ex.1.3: Negative Binomial Regression"
+            file: tfp/intro_neg_bin_tfp_stan.qmd
 
-      - text: "RStan"
+      - text: "Machine Learning"
         icon: cpu # Icon for computing/TensorFlow
         menu:
-          - text: "TensorFlow Framework"
-            file: models/tf-analysis.qmd
-          - text: "Clinical Validation"
-            file: models/validation.qmd
-      - text: "Graphical Neural Networks"
-        icon: gpu-card # Icon for computing/TensorFlow
+          - text: "Graphical Neural Networks"
+            file: ml/ml_gnn_example1.qmd
+          - text: "---" # Separator line
+          - text: "Basic example from TF GNN"
+            file: ml/ml_gnn_example1.qmd
+
+      - text: "LLMs"
+        icon: stars
         menu:
-          - text: "TensorFlow Framework"
-            file: models/tf-analysis.qmd
-          - text: "Clinical Validation"
-            file: models/validation.qmd
-
-
-      - text: "Other"
-        icon: book
-        file: vignettes/index.qmd
+          - text: "Prompt Engineering for Biostatistics"
+            file: llm/index_llm.qmd
 
     right:
       - icon: github
