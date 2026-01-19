@@ -1,4 +1,4 @@
-This package is a collection of heavily documented Rmarkdown vignettes demonstrating how to use [Tensorflow Probability (TFP)](https://www.tensorflow.org/probability) in [RStudio](https://posit.co/downloads/) for Bayesian inference. [RStan](https://mc-stan.org/rstan/) features in many of these for comparison. The application focus is **model building and trial simulation for clinical research and drug development**.
+This site is a collection of heavily documented Rmarkdown vignettes demonstrating how to use [Tensorflow Probability (TFP)](https://www.tensorflow.org/probability) in [RStudio](https://posit.co/downloads/) for Bayesian inference. [RStan](https://mc-stan.org/rstan/) features in many of these for comparison. The application focus is **model building and trial simulation for clinical research and drug development**.
 
 ## Why Tensorflow Probability (TFP)?
 
