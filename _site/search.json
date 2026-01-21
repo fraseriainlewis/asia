@@ -163,23 +163,16 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "",
+    "title": "Home",
     "section": "",
-    "text": "Code\nThis site is a collection of heavily documented Rmarkdown vignettes demonstrating how to use Tensorflow Probability (TFP) in RStudio for Bayesian inference. RStan features in many of these for comparison. The application focus is model building and trial simulation for clinical research and drug development."
+    "text": "This site contains a collection of R vignettes covering a range of themes relevant to statisticians working in drug development and clinical research. While we hope these vignettes are a useful resource, they are provided ‘as is’ without warranty of any kind, express or implied and used at your own risk."
   },
   {
-    "objectID": "index.html#why-tensorflow-probability-tfp",
-    "href": "index.html#why-tensorflow-probability-tfp",
-    "title": "",
-    "section": "Why Tensorflow Probability (TFP)?",
-    "text": "Why Tensorflow Probability (TFP)?\n\nHaving alternative options, e.g., to RStan, when using open source reduces business risk\nTFP is developed and maintained by Google and is available globally\nTFP provides a wide variety of building blocks for probabilistic modelling and ML"
-  },
-  {
-    "objectID": "index.html#running-the-vignettes",
-    "href": "index.html#running-the-vignettes",
-    "title": "",
-    "section": "Running the Vignettes",
-    "text": "Running the Vignettes\nLinks to the raw .Rmd files for download and local compilation can be found in each of the vignettes on this site. Local compilation has some dependencies which are given below.\n\nQuickstart\n\nInstall the tensorflow library and its install script must include “pandas” in the extra_packages option (see details below)\nInstall tfprobability\nEnsure pak is installed and loaded into session\nthen at R Console &gt; pak::pkg_install(\"fraseriainlewis/tfclinical\")\n\n\n\n\n\nInstallation details for Linux\nPython needs to be installed, and pyenv can also be a very useful tool if dealing with multiple Python versions and to avoid impacting the system Python installation.\n##########################################################\n# in RStudio Terminal (not R Console) or in Bash\nsudo apt-get update\nsudo apt-get install python3-venv python3-pip python3-dev\n##########################################################\n# in RStudio console\ninstall.packages(\"tensorflow\")\nlibrary(tensorflow)\ninstall_tensorflow(extra_packages = c(\"tf_keras\", \"tensorflow\", \"tensorflow-probability\",\"pandas\",\"matplotlib\"))\n# note - matplotlib is not essential, and may be removed or added later via py_install()\n#restart session\ninstall.packages(\"tfprobability\")\nlibrary(tensorflow)\nlibrary(tfprobability)\nd &lt;- tfd_binomial(total_count = 7, probs = 0.3) # if this works then tensorflow us correctly installed\n##########################################################\n\n\nInstallation details for Windows\nOn Windows the key part is to have a suitable Python installation and also that RStudio can locate this. Once this is in place then the installation process is as above for the Linux case.\n\n\nAdvanced: Installation of separate Python venv\nTo run the live Graphical Neural Network (GNN) vignette requires a separate Python venv to be setup because some tensorflow spin-off projects, such as TF-GNN, have strict compatibility requirements. Library versions likely need hardcoded as pip will not choose suitable combinations. The instructions below setup an appropriate venv for running the GNN vignette (only tested on MacOS).\n# in bash\npython3 -m venv gnn\nsource gnn/bin/activate\n# now install via pip the specific library versions needed\npip install tensorflow==2.16.2 tf_keras==2.16.0 tensorflow-gnn\nThe second part below in the R Console is to instruct reticulate to use this Python venv rather than one of the existing virtualenv environments, otherwise reticulate may use, e.g. the tensorflow venv created when doing the above install, which will likely not contain a compatible tensorflow version.\n# in RStudio console\nlibrary(reticulate)\nuse_virtualenv(\"/Users/work/gnn\", required = TRUE) # tell R to use the python interpreter and libraries in here"
+    "objectID": "index.html#key-themes-and-topics",
+    "href": "index.html#key-themes-and-topics",
+    "title": "Home",
+    "section": "Key Themes and Topics",
+    "text": "Key Themes and Topics\n\nTensorflow Probability\n\nTensorflow Probability is a relatively new library for Bayesian modelling building on the Tensorflow computational framework for large scale computation. An alternative to RStan and removes reliance on a single library for business critical modelling\n\nGraphical Neural Networks\n\nGraphical Neural Networks (GNN) are new tools and the go-to option for modelling in certain drug discovery tasks, such as properties of new molecules. This is a general methodology with wide application across clinical research for prediction and clustering.\n\nLLM prompts for statistical work\n\nLarge language models are changing the way statisticians work. Effectively using LLMs is a skill on its own, especially how to design and iterate prompts to LLMs save effort overall."
   },
   {
     "objectID": "ml/ml_gnn_example1.html",
