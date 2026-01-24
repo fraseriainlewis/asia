@@ -26,11 +26,12 @@ knitr::opts_chunk$set(
 
 ```
 
-```{r setup, eval=FALSE}
+```{r setup, eval=TRUE}
 #library(tfclinical)
 library(ragg)
 library(reticulate)
-use_virtualenv("/Users/work/gnn", required = TRUE)
+use_virtualenv("C://Users//fil44768//OneDrive - GSK//Documents//.virtualenvs//gnn", required=TRUE)
+#use_virtualenv("/Users/work/gnn", required = TRUE)
 # 1. Set the device to 'png' (which both R and Python understand)
 knitr::opts_chunk$set(dev = "png")
 
@@ -54,7 +55,15 @@ Needs compatible versions (installed via pip in venv hard coding versions):
 -   Name: tensorflow-gnn
     -   Version: 1.0.3
 
-```{python chunkpy1,include=TRUE, echo=TRUE,eval=FALSE}
+-   Python: 3.13.1
+-   Name: tf_keras
+    -   Version: 2.20.1
+-   Name: tensorflow
+    -   Version: 2.20.0
+-   Name: tensorflow-gnn
+    -   Version: 1.0.3
+
+```{python chunkpy1,include=TRUE, echo=TRUE,eval=TRUE}
 import os
 os.environ["TF_USE_LEGACY_KERAS"] = "1"  # For TF2.16+.
 
@@ -63,19 +72,22 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_gnn as tfgnn
 
-print(f'Running TF-GNN {tfgnn.__version__} with TensorFlow {tf.__version__}.')
+#print(f'Running TF-GNN {tfgnn.__version__} with TensorFlow {tf.__version__}.')
 
+```
 
+```{python chunkpy11,include=TRUE, echo=TRUE,eval=TRUE}
 
-
-train_path = os.path.join(os.getcwd(), 'precomputed/mutag', 'train.tfrecords')
-val_path = os.path.join(os.getcwd(), 'precomputed/mutag', 'val.tfrecords')
+train_path = os.path.join(os.getcwd(), 'data/mutag', 'train.tfrecords')
+val_path = os.path.join(os.getcwd(), 'data/mutag', 'val.tfrecords')
 #get_ipython().system('ls -l {train_path} {val_path}')
 
 print(f" the train path={train_path}")
 #exit()
+```
 
 
+```{python chunkpy111,include=TRUE, echo=TRUE,eval=TRUE}
 graph_tensor_spec = tfgnn.GraphTensorSpec.from_piece_specs(
     context_spec=tfgnn.ContextSpec.from_field_specs(features_spec={
                   'label': tf.TensorSpec(shape=(1,), dtype=tf.int32)
@@ -179,7 +191,7 @@ g.edge_sets['bonds'].features[tfgnn.HIDDEN_STATE]
 y
 ```
 
-```{python alltherest,include=FALSE,echo=TRUE, eval=FALSE}
+```{python alltherest,include=FALSE,echo=TRUE, eval=TRUE}
 batch_size = 32
 train_ds_batched = train_ds.batch(batch_size=batch_size).repeat()
 val_ds_batched = val_ds.batch(batch_size=batch_size)
@@ -330,7 +342,7 @@ history = model.fit(train_ds_batched,
 
 ```
 
-```{python, dev="png", eval=FALSE}
+```{python, dev="png", eval=TRUE}
 #for k, hist in history.history.items():
 #  plt.plot(hist)
 #  plt.title(k)
@@ -346,7 +358,7 @@ for k, hist in history.history.items():
     #plt.savefig(f"precomputed/pyplot_{k}.png")
     
     # Optional: If you want to show it in the console while running
-    # plt.show() 
+    plt.show() 
     
     #plt.close() 
     
