@@ -30,8 +30,8 @@ knitr::opts_chunk$set(
 #library(tfclinical)
 library(ragg)
 library(reticulate)
-use_virtualenv("C://Users//fil44768//OneDrive - GSK//Documents//.virtualenvs//gnn", required=TRUE)
-#use_virtualenv("/Users/work/gnn", required = TRUE)
+#use_virtualenv("C://Users//fil44768//OneDrive - GSK//Documents//.virtualenvs//gnn", required=TRUE)
+use_virtualenv("/Users/work/gnn", required = TRUE)
 # 1. Set the device to 'png' (which both R and Python understand)
 knitr::opts_chunk$set(dev = "png")
 
@@ -132,7 +132,10 @@ def decode_fn(record_bytes):
 train_ds = tf.data.TFRecordDataset([train_path]).map(decode_fn)
 val_ds = tf.data.TFRecordDataset([val_path]).map(decode_fn)
 
-
+count = train_ds.reduce(tf.constant(0), lambda x, _: x + 1)
+print(f"number of training record={count}\n")
+countval = val_ds.reduce(tf.constant(0), lambda x, _: x + 1)
+print(f"number of validation record={countval}\n")
 # ### Look at one example from the dataset
 
 # In[8]:
@@ -149,7 +152,7 @@ g, y = train_ds.take(1).get_single_element()
 # In[9]:
 
 
-print(g.node_sets['atoms'].features[tfgnn.HIDDEN_STATE])
+print(f"g.node_sets['atoms'].features[tfgnn.HIDDEN_STATE]=\n{g.node_sets['atoms'].features[tfgnn.HIDDEN_STATE]}")
 
 
 # #### Bond Edges
@@ -162,14 +165,15 @@ print(g.node_sets['atoms'].features[tfgnn.HIDDEN_STATE])
 
 # In[10]:
 
+print(f"g.edge_sets['bonds'].adjacency.source=\n{g.edge_sets['bonds'].adjacency.source}")
 
-g.edge_sets['bonds'].adjacency.source
+#g.edge_sets['bonds'].adjacency.source
 
 
 # In[11]:
 
-
-g.edge_sets['bonds'].adjacency.target
+print(f"g.edge_sets['bonds'].adjacency.target=\n{g.edge_sets['bonds'].adjacency.target}")
+#g.edge_sets['bonds'].adjacency.target
 
 
 # #### Edge features
@@ -178,8 +182,8 @@ g.edge_sets['bonds'].adjacency.target
 
 # In[12]:
 
-
-g.edge_sets['bonds'].features[tfgnn.HIDDEN_STATE]
+print(f"g.edge_sets['bonds'].features[tfgnn.HIDDEN_STATE]=\n{g.edge_sets['bonds'].features[tfgnn.HIDDEN_STATE]}")
+#g.edge_sets['bonds'].features[tfgnn.HIDDEN_STATE]
 
 
 # ### Label
@@ -188,7 +192,7 @@ g.edge_sets['bonds'].features[tfgnn.HIDDEN_STATE]
 # In[13]:
 
 
-y
+print(f"\nthe label={y}")
 ```
 
 ```{python alltherest,include=FALSE,echo=TRUE, eval=TRUE}
@@ -310,6 +314,11 @@ loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
 metrics = [tf.keras.metrics.BinaryAccuracy(threshold=0.),
             tf.keras.metrics.BinaryCrossentropy(from_logits=True)]
 
+# new
+callbacks = [
+    tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True),
+    tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5)
+]
 
 # #### Compile the keras model
 
@@ -329,11 +338,12 @@ model.summary()
 
 # In[20]:
 
-
+#with tf.device('/CPU:0'):
 history = model.fit(train_ds_batched,
                     steps_per_epoch=10,
-                    epochs=100,
-                    validation_data=val_ds_batched)
+                    epochs=1000,
+                    validation_data=val_ds_batched)#,
+                    #callbacks=callbacks)
 
 
 # ### Plot the loss and metric curves for train and val
@@ -364,6 +374,28 @@ for k, hist in history.history.items():
     
 
 # Feel free to play with the hyperparameters and the model architecture to improve the results!
+
+```
+```{python new1,include=FALSE,echo=TRUE, eval=TRUE}
+def _parse_function(example_proto):
+    # Define the feature description for parsing
+    feature_description = {
+        'nodes': tf.io.VarLenFeature(tf.int64),
+        'edges': tf.io.VarLenFeature(tf.int64),
+        'edge_indices': tf.io.VarLenFeature(tf.int64),
+        'label': tf.io.FixedLenFeature([], tf.int64),
+    }
+    # Parse the input tf.Example proto using the dictionary above
+    parsed_features = tf.io.parse_single_example(example_proto, feature_description)
+    return parsed_features
+
+# Load from TFRecord
+dataset = tf.data.TFRecordDataset(['data/mutag/train.tfrecords'])
+dataset = dataset.map(_parse_function)
+dataset = dataset.shuffle(buffer_size=1000).batch(32)
+
+for batch in dataset.take(1):
+    print(batch)
 
 ```
 
