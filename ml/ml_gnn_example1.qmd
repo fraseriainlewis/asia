@@ -54,7 +54,6 @@ Needs compatible versions (installed via pip in venv hard coding versions):
     -   Version: 2.16.2
 -   Name: tensorflow-gnn
     -   Version: 1.0.3
-
 -   Python: 3.13.1
 -   Name: tf_keras
     -   Version: 2.20.1
@@ -86,7 +85,6 @@ print(f" the train path={train_path}")
 #exit()
 ```
 
-
 ```{python chunkpy111,include=TRUE, echo=TRUE,eval=TRUE}
 graph_tensor_spec = tfgnn.GraphTensorSpec.from_piece_specs(
     context_spec=tfgnn.ContextSpec.from_field_specs(features_spec={
@@ -113,7 +111,9 @@ graph_tensor_spec = tfgnn.GraphTensorSpec.from_piece_specs(
                     'atoms', 'atoms'))
     })
 
+```
 
+```{python chunkpy113,include=TRUE, echo=TRUE,eval=TRUE}
 def decode_fn(record_bytes):
   graph = tfgnn.parse_single_example(
       graph_tensor_spec, record_bytes, validate=True)
@@ -338,12 +338,12 @@ model.summary()
 
 # In[20]:
 
-#with tf.device('/CPU:0'):
-history = model.fit(train_ds_batched,
+with tf.device('/CPU:0'):
+    history = model.fit(train_ds_batched,
                     steps_per_epoch=10,
-                    epochs=1000,
-                    validation_data=val_ds_batched)#,
-                    #callbacks=callbacks)
+                    epochs=100,
+                    validation_data=val_ds_batched#,
+                    ) #callbacks=callbacks)
 
 
 # ### Plot the loss and metric curves for train and val
@@ -376,27 +376,7 @@ for k, hist in history.history.items():
 # Feel free to play with the hyperparameters and the model architecture to improve the results!
 
 ```
-```{python new1,include=FALSE,echo=TRUE, eval=TRUE}
-def _parse_function(example_proto):
-    # Define the feature description for parsing
-    feature_description = {
-        'nodes': tf.io.VarLenFeature(tf.int64),
-        'edges': tf.io.VarLenFeature(tf.int64),
-        'edge_indices': tf.io.VarLenFeature(tf.int64),
-        'label': tf.io.FixedLenFeature([], tf.int64),
-    }
-    # Parse the input tf.Example proto using the dictionary above
-    parsed_features = tf.io.parse_single_example(example_proto, feature_description)
-    return parsed_features
 
-# Load from TFRecord
-dataset = tf.data.TFRecordDataset(['data/mutag/train.tfrecords'])
-dataset = dataset.map(_parse_function)
-dataset = dataset.shuffle(buffer_size=1000).batch(32)
 
-for batch in dataset.take(1):
-    print(batch)
-
-```
 
 ## the end

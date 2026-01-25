@@ -1,0 +1,111 @@
+---
+title: "tf_gnn_buildingblocks"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{tf_gnn_example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+# Check if running on GitHub Actions
+# This is important as otherwise Github will attempt to build this and it's missing the python libraries and will fail
+#on_github <- Sys.getenv("GITHUB_ACTIONS") == "true"
+
+# If on GitHub, set eval = FALSE for all subsequent chunks
+#knitr::opts_chunk$set(eval = !on_github)
+
+```
+
+```{r setup, eval=TRUE}
+#library(tfclinical)
+library(ragg)
+library(reticulate)
+#use_virtualenv("C://Users//fil44768//OneDrive - GSK//Documents//.virtualenvs//gnn", required=TRUE)
+use_virtualenv("/Users/work/gnn", required = TRUE)
+# 1. Set the device to 'png' (which both R and Python understand)
+knitr::opts_chunk$set(dev = "png")
+
+# 2. Tell R to use ragg as the default engine for all png devices
+options(device = function(...) ragg::agg_png(...))
+```
+
+## Graphical Neural Network Model
+
+Needs compatible versions (installed via pip in venv hard coding versions):
+
+-   Python: 3.11.14
+-   Name: tf_keras
+    -   Version: 2.16.0
+-   Name: tensorflow
+    -   Version: 2.16.2
+-   Name: tensorflow-gnn
+    -   Version: 1.0.3
+
+-   Python: 3.13.1
+-   Name: tf_keras
+    -   Version: 2.20.1
+-   Name: tensorflow
+    -   Version: 2.20.0
+-   Name: tensorflow-gnn
+    -   Version: 1.0.3
+
+```{r}
+#| label: "rsetup"
+#| include: true
+#| eval: true
+
+# create data set
+# simply structure - variance is function of mean
+# covariance function of both means
+# some zero entries
+library(MASS)
+set.seed(1001)
+ndim<-10 # number of variables for each patient
+mu<-sample(seq(4,20,len=20),ndim)
+Sigma<-matrix(data=0,ncol=ndim,nrow=ndim,byrow=TRUE)
+for(i in 1:nrow(Sigma)){
+  for(j in i:ncol(Sigma)){
+    if(i==j){Sigma[i,j]<-(0.2*mu[i])^2 #sd is 20% of mean
+    } else{ 
+           if(runif(1)>0.0){
+             Sigma[i,j]<-Sigma[j,i]<-(0.2*mu[i]*0.2*mu[j])
+                             }
+          }
+  }
+}
+
+thedata<-mvrnorm(n=5,mu=mu,Sigma=Sigma)
+        
+
+```
+
+
+
+```{python}
+#| label: "py1"
+#| include: true
+#| eval: true
+
+import os
+os.environ["TF_USE_LEGACY_KERAS"] = "1"  # For TF2.16+.
+
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+import tensorflow_gnn as tfgnn
+
+print(f'Running TF-GNN {tfgnn.__version__} with TensorFlow {tf.__version__}.')
+
+```
+
+## the end

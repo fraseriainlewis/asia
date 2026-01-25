@@ -1,0 +1,15 @@
+{
+  "hash": "8e63dd4365a62b34482f689e2bca31cc",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"tf_gnn_buildingblocks\"\noutput: \n  rmarkdown::html_vignette:\n    toc: true\n    toc_depth: 2\n    number_sections: true\nvignette: >\n  %\\VignetteIndexEntry{tf_gnn_example}\n  %\\VignetteEngine{knitr::rmarkdown}\n  %\\VignetteEncoding{UTF-8}\n---\n\n\n\n\n::: {.cell}\n\n```{.r .cell-code}\n#library(tfclinical)\nlibrary(ragg)\nlibrary(reticulate)\n#use_virtualenv(\"C://Users//fil44768//OneDrive - GSK//Documents//.virtualenvs//gnn\", required=TRUE)\nuse_virtualenv(\"/Users/work/gnn\", required = TRUE)\n# 1. Set the device to 'png' (which both R and Python understand)\nknitr::opts_chunk$set(dev = \"png\")\n\n# 2. Tell R to use ragg as the default engine for all png devices\noptions(device = function(...) ragg::agg_png(...))\n```\n:::\n\n\n## Graphical Neural Network Model\n\nNeeds compatible versions (installed via pip in venv hard coding versions):\n\n-   Python: 3.11.14\n-   Name: tf_keras\n    -   Version: 2.16.0\n-   Name: tensorflow\n    -   Version: 2.16.2\n-   Name: tensorflow-gnn\n    -   Version: 1.0.3\n\n-   Python: 3.13.1\n-   Name: tf_keras\n    -   Version: 2.20.1\n-   Name: tensorflow\n    -   Version: 2.20.0\n-   Name: tensorflow-gnn\n    -   Version: 1.0.3\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# create data set\n# simply structure - variance is function of mean\n# covariance function of both means\n# some zero entries\nlibrary(MASS)\nset.seed(1001)\nndim<-10 # number of variables for each patient\nmu<-sample(seq(4,20,len=20),ndim)\nSigma<-matrix(data=0,ncol=ndim,nrow=ndim,byrow=TRUE)\nfor(i in 1:nrow(Sigma)){\n  for(j in i:ncol(Sigma)){\n    if(i==j){Sigma[i,j]<-(0.2*mu[i])^2 #sd is 20% of mean\n    } else{ \n           if(runif(1)>0.0){\n             Sigma[i,j]<-Sigma[j,i]<-(0.2*mu[i]*0.2*mu[j])\n                             }\n          }\n  }\n}\n\nthedata<-mvrnorm(n=5,mu=mu,Sigma=Sigma)\n        \n\n```\n:::\n\n\n\n\n\n::: {.cell}\n\n```{.python .cell-code}\nimport os\nos.environ[\"TF_USE_LEGACY_KERAS\"] = \"1\"  # For TF2.16+.\n\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport tensorflow as tf\nimport tensorflow_gnn as tfgnn\n\nprint(f'Running TF-GNN {tfgnn.__version__} with TensorFlow {tf.__version__}.')\n#> Running TF-GNN 1.0.3 with TensorFlow 2.16.2.\n```\n:::\n\n\n## the end\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
