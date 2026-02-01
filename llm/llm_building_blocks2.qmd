@@ -1,0 +1,365 @@
+---
+title: "tf_gnn_buildingblocks"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{tf_gnn_example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r}
+#| label: "rsetup"
+#| include: true
+#| eval: true
+library(reticulate)
+#use_virtualenv("C://Users//fil44768//OneDrive - GSK//Documents//.virtualenvs//gnn", required=TRUE)
+use_virtualenv("/Users/work/pyollama", required = TRUE)
+```
+
+```{r}
+#| label: "create_example1"
+#| include: true
+#| eval: true
+library(synthpop)
+library(kableExtra)
+
+my_table1_object <- table(SD2011$sex,SD2011$edu) %>%
+  kable() %>%
+  kable_styling(full_width = F) %>%
+  column_spec(1, bold = T, color = "blue")
+
+my_table1_object
+
+```
+
+```{r}
+
+
+ex2<-table(SD2011$smoke,SD2011$sport,useNA="no")
+
+
+mask<- SD2011$sex=="FEMALE" & SD2011$edu=="SECONDARY"
+ex3<-table(SD2011$smoke[mask],SD2011$sport[mask],dnn=c("Smoker","Sport"),useNA="no")
+
+
+```
+
+```{r}
+#| label: "data set for passing"
+#| include: true
+#| eval: true
+library(jsonlite)
+## Instruction: You are a clinical data analyst. Analyze the following patient records and answer the query accurately.
+
+thedata<-toJSON(head(SD2011),pretty=TRUE)
+Nint<-100L
+r_to_py(Nint)
+```
+
+```{python}
+print(f"N={r.Nint}\n")
+N=r.Nint
+```
+
+```{python}
+#| label: "py1"
+#| include: true
+#| eval: true
+
+import ollama
+import json
+
+model_name = 'qwen3-coder:30b' #'phi4:latest'
+#model_name = 'phi4:latest'
+#N=10 #no. reps
+
+prompt = """
+
+
+Query: Write a prompt which will be sent to an LLM which accurately and concisely describes the following textual description and layout of a data analysis tabulation:
+
+<table>
+Counts of sex by edu
+
+             | PRIMARY/NO EDUCATION	 | VOCATIONAL/GRAMMAR |	SECONDARY	 | POST-SECONDARY OR HIGHER | Row Total
+MALE	       |                       |                    |            |                          |
+FEMALE       |                       |                    |            |                          |
+------------------------------------------------------------------------------------------------------
+Column total |                       |                    |            |                          |
+
+</table}
+
+"""
+response = ollama.chat(
+        model=model_name,
+        #format='json', # This is the magic line
+        messages=[{'role': 'user', 'content': prompt}]
+    )
+    # Parse the string into a real Python Dictionary
+
+print(f"{response}\n")
+    
+
+```
+
+
+```{python}
+#| label: "py1"
+#| include: true
+#| eval: true
+
+import ollama
+import json
+
+model_name = 'qwen3-coder:30b' #'phi4:latest'
+#model_name = 'phi4:latest'
+#N=10 #no. reps
+
+prompt = """
+Instruction: You are an expert statistician and programmer. Analyze the following patient records and answer the query accurately. 
+
+Data:
+[
+  {
+    "sex": "FEMALE",
+    "age": 57,
+    "agegr": "45-59",
+    "placesize": "URBAN 100,000-200,000",
+    "region": "Lubuskie",
+    "edu": "VOCATIONAL/GRAMMAR",
+    "eduspec": "services for the population and transport services",
+    "socprof": "RETIRED",
+    "unempdur": 0,
+    "income": 800,
+    "marital": "MARRIED",
+    "mmarr": 10,
+    "ymarr": 1979,
+    "ls": "PLEASED",
+    "depress": 6,
+    "trust": "ONE CAN`T BE TOO CAREFUL",
+    "trustfam": "YES",
+    "trustneigh": "NO",
+    "sport": "NO",
+    "nofriend": 6,
+    "smoke": "NO",
+    "nociga": -8,
+    "alcabuse": "NO",
+    "alcsol": "NO",
+    "workab": "NO",
+    "wkabdur": "-8",
+    "wkabint": "NO",
+    "englang": "NONE",
+    "height": 170,
+    "weight": 89,
+    "bmi": 30.7958
+  },
+  {
+    "sex": "MALE",
+    "age": 20,
+    "agegr": "16-24",
+    "placesize": "RURAL AREAS",
+    "region": "Podlaskie",
+    "edu": "VOCATIONAL/GRAMMAR",
+    "eduspec": "no specialisation",
+    "socprof": "PUPIL OR STUDENT",
+    "unempdur": -8,
+    "income": 350,
+    "marital": "SINGLE",
+    "ls": "MOSTLY SATISFIED",
+    "depress": 0,
+    "trust": "IT`S DIFFICULT TO TELL",
+    "trustfam": "YES",
+    "trustneigh": "NO OPINION",
+    "sport": "NO",
+    "nofriend": 4,
+    "smoke": "NO",
+    "nociga": -8,
+    "alcabuse": "NO",
+    "alcsol": "NO",
+    "workab": "NO",
+    "wkabdur": "-8",
+    "wkabint": "NO",
+    "englang": "ACTIVE",
+    "height": 187,
+    "weight": 82,
+    "bmi": 23.4493
+  },
+  {
+    "sex": "FEMALE",
+    "age": 18,
+    "agegr": "16-24",
+    "placesize": "URBAN 500,000 AND OVER",
+    "region": "Mazowieckie",
+    "edu": "VOCATIONAL/GRAMMAR",
+    "eduspec": "no specialisation",
+    "socprof": "PUPIL OR STUDENT",
+    "unempdur": -8,
+    "marital": "SINGLE",
+    "ls": "PLEASED",
+    "depress": 0,
+    "trust": "MOST PEOPLE CAN BE TRUSTED",
+    "trustfam": "YES",
+    "trustneigh": "NO",
+    "sport": "NO",
+    "nofriend": 20,
+    "smoke": "NO",
+    "nociga": -8,
+    "alcabuse": "NO",
+    "alcsol": "NO",
+    "wkabdur": "-8",
+    "wkabint": "NO",
+    "englang": "ACTIVE",
+    "height": 165,
+    "weight": 50,
+    "bmi": 18.3655
+  },
+  {
+    "sex": "FEMALE",
+    "age": 78,
+    "agegr": "65+",
+    "placesize": "RURAL AREAS",
+    "region": "Podlaskie",
+    "edu": "PRIMARY/NO EDUCATION",
+    "eduspec": "no specialisation",
+    "socprof": "RETIRED",
+    "unempdur": -8,
+    "income": 900,
+    "marital": "WIDOWED",
+    "mmarr": 8,
+    "ymarr": 1958,
+    "msepdiv": 12,
+    "ysepdiv": 1997,
+    "ls": "MIXED",
+    "depress": 16,
+    "trust": "ONE CAN`T BE TOO CAREFUL",
+    "trustfam": "NO",
+    "trustneigh": "YES",
+    "sport": "YES",
+    "nofriend": 0,
+    "smoke": "NO",
+    "nociga": -8,
+    "alcabuse": "NO",
+    "alcsol": "NO",
+    "workab": "NO",
+    "wkabdur": "-8",
+    "wkabint": "NO",
+    "englang": "NONE",
+    "height": 160,
+    "weight": 78,
+    "bmi": 30.4687
+  },
+  {
+    "sex": "FEMALE",
+    "age": 54,
+    "agegr": "45-59",
+    "placesize": "URBAN 100,000-200,000",
+    "region": "Zachodnio-pomorskie",
+    "edu": "VOCATIONAL/GRAMMAR",
+    "eduspec": "agriculture, forestry, fishing",
+    "socprof": "SELF-EMPLOYED",
+    "unempdur": -8,
+    "income": 1500,
+    "marital": "MARRIED",
+    "mmarr": 6,
+    "ymarr": 1980,
+    "ls": "MOSTLY SATISFIED",
+    "depress": 4,
+    "trust": "ONE CAN`T BE TOO CAREFUL",
+    "trustfam": "YES",
+    "trustneigh": "YES",
+    "sport": "YES",
+    "nofriend": 6,
+    "smoke": "YES",
+    "nociga": 20,
+    "alcabuse": "NO",
+    "alcsol": "NO",
+    "workab": "NO",
+    "wkabdur": "-8",
+    "wkabint": "NO",
+    "englang": "NONE",
+    "height": 158,
+    "weight": 50,
+    "bmi": 20.0288
+  },
+  {
+    "sex": "MALE",
+    "age": 20,
+    "agegr": "16-24",
+    "placesize": "URBAN 100,000-200,000",
+    "region": "Slaskie",
+    "edu": "SECONDARY",
+    "eduspec": "no specialisation",
+    "socprof": "PUPIL OR STUDENT",
+    "unempdur": 0,
+    "income": -8,
+    "marital": "SINGLE",
+    "ls": "PLEASED",
+    "depress": 5,
+    "trust": "ONE CAN`T BE TOO CAREFUL",
+    "trustfam": "YES",
+    "trustneigh": "NO OPINION",
+    "sport": "NO",
+    "nofriend": 10,
+    "smoke": "NO",
+    "nociga": -8,
+    "alcabuse": "NO",
+    "alcsol": "NO",
+    "workab": "NO",
+    "wkabdur": "-8",
+    "wkabint": "NO",
+    "englang": "ACTIVE",
+    "height": 165,
+    "weight": 65,
+    "bmi": 23.8751
+  }
+] 
+
+Query: Write R code to 
+create a data analysis table showing the distribution of respondents by sex across four educational levels. The table should have:
+  - Rows: MALE, FEMALE
+  - Columns: PRIMARY/NO EDUCATION, VOCATIONAL/GRAMMAR, SECONDARY, POST-SECONDARY OR HIGHER
+  - Header row with column totals
+  - Row totals for each sex category
+  - Empty cells for count data that needs to be populated
+  
+The table structure should display counts of individuals categorized by both gender and education level, allowing for analysis of educational attainment patterns by sex.'
+
+The data set is a data.frame called "SD2011". Explicitly exclude NAs from any computation. Return the R code as JSON in an element called code. Be concise. 
+
+
+"""
+results1 = []
+for i in range(25):
+    response = ollama.chat(
+        model=model_name,
+        format='json', # This is the magic line
+        messages=[{'role': 'user', 'content': prompt}]
+    )
+    # Parse the string into a real Python Dictionary
+    data = json.loads(response['message']['content'])
+    keep = data['code']
+    ##print(f"iter={i} {data['code']}\n")
+    results1.append(keep)
+
+```
+
+```{r}
+library(tidyr)
+safe_run<- function(code) {
+  tryCatch({
+    all_results <- eval(parse(text = code));
+    print(all_results)
+    return(all_results)
+  }, error = function(e) {
+    paste("Error in generated code:", e$message)
+  })
+}
+safe_run(py$results1[1])
+```
+
+## the end
